@@ -1,5 +1,5 @@
 module "storage_dev" {
-  source                      = "/modules/storage"
+  source                      = "modules/storage"
   project_id                  = "test-interno-trendit"
   name                        = "mike-dev-2024"
   folder_name                 = "dev/data1/"
@@ -8,7 +8,7 @@ module "storage_dev" {
   uniform_bucket_level_access = true
 }
 module "storage_test" {
-  source                      = "/modules/storage"
+  source                      = "modules/storage"
   project_id                  = "test-interno-trendit"
   name                        = "mike-test-2024"
   folder_name                 = "test/data1/"
