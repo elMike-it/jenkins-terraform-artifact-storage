@@ -21,7 +21,10 @@ pipeline {
                     sh """
                     gcloud auth activate-service-account --key-file=$GOOGLE_TERRAFORM_APPLICATION_CREDENTIALS
                     gcloud config set project $PROJECT_ID
+                    echo "Project ID: $PROJECT_ID"
+                    echo "Google Auth:"
                     gcloud auth list
+                    gcloud projects describe $PROJECT_ID
                     """
                      }
                 }
@@ -29,12 +32,10 @@ pipeline {
         }
 
         stage('Terraform with Docker') {
-            agent {
-                docker {
-                    image 'hashicorp/terraform:latest' // Imagen oficial de Terraform
-                    //args '-u root' // Permite ejecutar comandos como usuario root
-                    args '--entrypoint=""'// Esto elimina conflictos de ENTRYPOINT
-                }
+            docker {
+                image 'hashicorp/terraform:latest' // Imagen oficial de Terraform
+                //args '-u root' // Permite ejecutar comandos como usuario root
+                args '--entrypoint=""'// Esto elimina conflictos de ENTRYPOINT
             }
             stages {
                 stage('Initialize Terraform') {
