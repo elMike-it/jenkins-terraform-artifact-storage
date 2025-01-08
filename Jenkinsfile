@@ -33,13 +33,6 @@ pipeline {
 
         stage('Terraform with Docker') {
             agent {
-            environment {
-                PROJECT_ID = 'test-interno-trendit'
-                SERVICE_NAME = 'mike-cloud-run-service'
-                REGION = 'us-central1' // e.g., us-central1
-                IMAGE_NAME = "gcr.io/${PROJECT_ID}/${SERVICE_NAME}"
-                GCP_KEYFILE = credentials('gcp-terraform-service-account-key') // Configurado en Jenkins
-            }
                 docker {
                     image 'hashicorp/terraform:latest' // Imagen oficial de Terraform
                     //args '-u root' // Permite ejecutar comandos como usuario root
