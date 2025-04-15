@@ -2,7 +2,7 @@ pipeline {
     agent any
     environment {
         PROJECT_ID = 'test-interno-trendit'
-        SERVICE_NAME = 'mike-cloud-run-service'
+        SERVICE_NAME = 'mike-cloud-run-service-tf'
         REGION = 'us-central1' // e.g., us-central1
         IMAGE_NAME = "gcr.io/${PROJECT_ID}/${SERVICE_NAME}"
         GCP_KEYFILE = credentials('gcp-terraform-service-account-key') // Configurado en Jenkins
@@ -39,6 +39,14 @@ pipeline {
                     args '--entrypoint=""'// Esto elimina conflictos de ENTRYPOINT
                 }
             }
+            environment{
+                GOOGLE_APPLICATION_CREDENTIALS = "${WORKSPACE}/gcp-key.json"
+            }
+            steps {
+                withCredentials([file(credentialsId: 'gcp-terraform-service-account-key', variable: 'GCP_CRED_FILE')]) {
+                    sh 'cp $GCP_CREDS $GOOGLE_APPLICATION_CREDENTIALS'
+                }
+            }
             stages {
                 stage('Initialize Terraform') {
                     steps {
@@ -52,15 +60,6 @@ pipeline {
                         dir('terraform') {
                             sh 'terraform plan -out=tfplan'
                         }
-                    }
-                }
-                stage('Auth in Terraform'){
-                    steps{
-                    sh """
-                    echo "Google Auth:"
-                    gcloud auth list
-                    gcloud projects describe $PROJECT_ID
-                    """
                     }
                 }
                 stage('Apply Terraform') {
