@@ -54,6 +54,15 @@ pipeline {
                         }
                     }
                 }
+                stage('Auth in Terraform'){
+                    steps{
+                    sh """
+                    echo "Google Auth:"
+                    gcloud auth list
+                    gcloud projects describe $PROJECT_ID
+                    """
+                    }
+                }
                 stage('Apply Terraform') {
                     steps {
                         dir('terraform') {
