@@ -15,6 +15,15 @@ pipeline {
             }
         }
 
+        stage('Leer Entorno desde Archivo') {
+            steps {
+                script {
+                    env.TF_ENVIRONMENT = readFile('terraform/env.sh').trim()
+                    echo "Entorno leído del archivo: ${env.TF_ENVIRONMENT}"
+                }
+            }
+        }
+
         stage('Terraform with Docker') {
             agent {
                 docker {
@@ -32,16 +41,17 @@ pipeline {
                     sh 'cp $GCP_CRED_FILE $GOOGLE_APPLICATION_CREDENTIALS'
                 }
 
-                dir('terraform') {
-                    dir("pro"){
+                script {
+                    def tfDir = "terraform/${env.TF_ENVIRONMENT}"
+                    echo "Ejecutando Terraform en: ${tfDir}"
+
+                    dir(tfDir) {
                         sh '''
                             terraform init
                             terraform plan -out=tfplan
-                            
                         '''
-                        // terraform apply -auto-approve tfplan
+                        //terraform apply -auto-approve tfplan
                     }
-
                 }
             }
         }
