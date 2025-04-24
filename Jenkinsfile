@@ -33,11 +33,15 @@ pipeline {
                 }
 
                 dir('terraform') {
-                    sh '''
-                        terraform init
-                        terraform plan -out=tfplan
-                        terraform apply -auto-approve tfplan
-                    '''
+                    dir("pro"){
+                        sh '''
+                            terraform init
+                            terraform plan -out=tfplan
+                            
+                        '''
+                        // terraform apply -auto-approve tfplan
+                    }
+
                 }
             }
         }
