@@ -18,7 +18,7 @@ pipeline {
         stage('Leer Entorno desde Archivo') {
             steps {
                 script {
-                    env.TF_ENVIRONMENT = readFile('terraform/env.sh').trim()
+                    env.TF_ENVIRONMENT = readFile('/env.sh').trim()
                     echo "Entorno leído del archivo: ${env.TF_ENVIRONMENT}"
                 }
             }
