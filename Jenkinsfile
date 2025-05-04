@@ -15,17 +15,17 @@ pipeline {
             }
         }
 
-        stage('Leer Entorno desde Archivo') {
+        stage('Branch Identify') {
             steps {
                 script {
                     def branchName = env.GIT_BRANCH?.replaceFirst(/^origin\//, '') ?: sh(script: "git rev-parse --abbrev-ref HEAD", returnStdout: true).trim()
                     env.TF_ENVIRONMENT = branchName
-                    echo "📍 Branch selected : ${env.TF_ENVIRONMENT}"
+                    echo "🔀 Branch ${env.TF_ENVIRONMENT} selected"
                 }
             }
         }
 
-        stage('Terraform with Docker') {
+        stage('Deploy Terraform Docker Image') {
             agent {
                 docker {
                     image 'hashicorp/terraform:latest'
@@ -43,13 +43,33 @@ pipeline {
                 }
                 dir("terraform/${env.TF_ENVIRONMENT}") {
                     sh '''
-                        terraform init
+                        terraform init                       
                         terraform plan -out=tfplan
                     '''
                     //terraform apply -auto-approve tfplan
                 }
             }
         }
+
+        stage('Wating for approval') {
+            when {
+                expression {
+                    return env.TF_ENVIRONMENT != 'test-cicd'
+                }
+            }
+            steps {
+                input message: "¿Aprobar aplicación de cambios en ${env.TF_ENVIRONMENT}?", ok: "Si", cancel: "No"
+            }
+        }
+
+        stage('Apply') {
+            steps {
+                script {
+                    echo "✅ Terraform Apply in ${env.TF_ENVIRONMENT}"
+                }
+            }
+        }
+
     }
 
     post {
