@@ -18,8 +18,9 @@ pipeline {
         stage('Leer Entorno desde Archivo') {
             steps {
                 script {
-                    fileContents = readFile 'env.sh'
-                    echo "Ejecutando Terraform en: ${fileContents}"
+                    def branchName = env.GIT_BRANCH?.replaceFirst(/^origin\//, '') ?: sh(script: "git rev-parse --abbrev-ref HEAD", returnStdout: true).trim()
+                    env.TF_ENVIRONMENT = branchName
+                    echo "📍 Branch selected : ${env.TF_ENVIRONMENT}"
                 }
             }
         }
@@ -40,7 +41,7 @@ pipeline {
                 withCredentials([file(credentialsId: 'gcp-terraform-service-account-key', variable: 'GCP_CRED_FILE')]) {
                     sh 'cp $GCP_CRED_FILE $GOOGLE_APPLICATION_CREDENTIALS'
                 }
-                dir("terraform/${fileContents}") {
+                dir("terraform/${env.TF_ENVIRONMENT}") {
                     sh '''
                         terraform init
                         terraform plan -out=tfplan
