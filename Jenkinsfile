@@ -58,7 +58,7 @@ pipeline {
                 }
             }
             steps {
-                input message: "¿Aprobar aplicación de cambios en ${env.TF_ENVIRONMENT}?", ok: "Si", cancel: "No"
+                input message: "¿Aprobar aplicación de cambios en ${env.TF_ENVIRONMENT}?"
             }
         }
 
