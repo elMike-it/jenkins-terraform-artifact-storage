@@ -62,10 +62,12 @@ pipeline {
 
         stage('Wating for approval') {
             when {
-                expression {
-                    return env.TF_ENVIRONMENT != 'test-cicd'
-                    expression { return env.IS_PR != 'true' } // Si NO es PR
+                allOf {
+                    expression {
+                        return env.TF_ENVIRONMENT != 'test-cicd'
+                        expression { return env.IS_PR != 'true' } // Si NO es PR
 
+                    }
                 }
             }
             steps {
@@ -75,9 +77,11 @@ pipeline {
 
         stage('Apply') {
             when {
-                expression {
-                    return env.TF_ENVIRONMENT != 'test-cicd'
-                    expression { return env.IS_PR != 'true' } // Si NO es PR
+                allOf {
+                    expression {
+                        return env.TF_ENVIRONMENT != 'test-cicd'
+                        expression { return env.IS_PR != 'true' } // Si NO es PR
+                    }
                 }
             }
             steps {
