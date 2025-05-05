@@ -51,10 +51,21 @@ pipeline {
             }
         }
 
+        stage('Pull Request?') {
+            steps {
+                script {
+                    env.IS_PR = env.CHANGE_ID ? 'true' : 'false'
+                    echo "🔍 Pull Request?: ${env.IS_PR}"
+                }
+            }
+        }
+
         stage('Wating for approval') {
             when {
                 expression {
                     return env.TF_ENVIRONMENT != 'test-cicd'
+                    expression { return env.IS_PR != 'true' } // Si NO es PR
+
                 }
             }
             steps {
@@ -63,6 +74,12 @@ pipeline {
         }
 
         stage('Apply') {
+            when {
+                expression {
+                    return env.TF_ENVIRONMENT != 'test-cicd'
+                    expression { return env.IS_PR != 'true' } // Si NO es PR
+                }
+            }
             steps {
                 script {
                     echo "✅ Terraform Apply in ${env.TF_ENVIRONMENT}"
