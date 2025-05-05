@@ -1,7 +1,7 @@
 module "storage_dev" {
   source                      = "../modules/storage"
   project_id                  = "test-interno-trendit"
-  name                        = "mike-qas-2025"
+  name                        = "mike-qas-2025-test3"
   folder_name                 = "qas/data1/"
   location                    = "us-west1"
   force_destroy               = true
@@ -10,7 +10,7 @@ module "storage_dev" {
 module "storage_test" {
   source                      = "../modules/storage"
   project_id                  = "test-interno-trendit"
-  name                        = "mike-qas2-2025"
+  name                        = "mike-qas2-2025-test3"
   folder_name                 = "qas2/data1/"
   location                    = "us-west1"
   force_destroy               = true
