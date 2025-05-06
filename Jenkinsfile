@@ -65,7 +65,7 @@ pipeline {
                 allOf {
                     expression {
                         return env.TF_ENVIRONMENT != 'test-cicd'
-                        expression { return env.IS_PR != 'true' } // Si NO es PR
+                        expression { return env.IS_PR = 'false' } // Si NO es PR
 
                     }
                 }
