@@ -20,7 +20,7 @@ pipeline {
                 script {
                     def branchName = env.GIT_BRANCH?.replaceFirst(/^origin\//, '') ?: sh(script: "git rev-parse --abbrev-ref HEAD", returnStdout: true).trim()
                     env.TF_ENVIRONMENT = branchName
-                    echo "🔀 Branch ${env.TF_ENVIRONMENT} selected"
+                    echo "🔀 Branch ${env.TF_ENVIRONMENT} selected, BranchName ${env.BRANCH_NAME} From ${env.CHANGE_BRANCH} to ${env.CHANGE_TARGET}"
                 }
             }
         }
@@ -55,7 +55,7 @@ pipeline {
             steps {
                 script {
                     env.IS_PR = env.CHANGE_ID ? 'true' : 'false'
-                    echo "🔍 Pull Request?: ${env.CHANGE_ID}"
+                    echo "🔍 Pull Request?: ${env.CHANGE_ID} to ${env.CHANGE_TARGET}"
                 }
             }
         }
