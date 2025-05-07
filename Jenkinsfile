@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    options {
+        ansiColor('xterm')  // From ansiColor Plugin 
+    }
+
     environment {
         PROJECT_ID = 'test-interno-trendit'
         SERVICE_NAME = 'mike-cloud-run-service-tf'
@@ -26,6 +30,13 @@ pipeline {
         }
 
         stage('Deploy Terraform Docker Image') {
+            when {
+                allOf {
+                    expression {
+                        return ['pipeline-pro', 'pipeline-dev', 'pipeline-qas'].contains(env.SELECTED_BRANCH)
+                    }
+                }
+            }
             agent {
                 docker {
                     image 'hashicorp/terraform:latest'
@@ -46,7 +57,6 @@ pipeline {
                         terraform init                       
                         terraform plan -out=tfplan
                     '''
-                    //terraform apply -auto-approve tfplan
                 }
             }
         }
@@ -65,13 +75,14 @@ pipeline {
                 allOf {
                     expression {
                         return ['pipeline-pro', 'pipeline-dev', 'pipeline-qas'].contains(env.SELECTED_BRANCH)
-                        expression { return env.IS_PR = 'false' } // Si NO es PR
+                        //expression { return env.IS_PR = 'false' } // Si NO es PR
 
                     }
                 }
             }
             steps {
                 input message: "¿Aprobar aplicación de cambios en ${env.SELECTED_BRANCH}?"
+                    //terraform apply -auto-approve tfplan
             }
         }
 
@@ -80,7 +91,7 @@ pipeline {
                 allOf {
                     expression {
                         return ['pipeline-pro', 'pipeline-dev', 'pipeline-qas'].contains(env.SELECTED_BRANCH)
-                        expression { return env.IS_PR != 'true' } // Si NO es PR
+                        //expression { return env.IS_PR != 'true' } // Si NO es PR
                     }
                 }
             }
