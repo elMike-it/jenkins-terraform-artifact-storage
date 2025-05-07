@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    options {
+        ansiColor('xterm')  // From ansiColor Plugin 
+    }
+
     environment {
         PROJECT_ID = 'test-interno-trendit'
         SERVICE_NAME = 'mike-cloud-run-service-tf'
@@ -19,13 +23,20 @@ pipeline {
             steps {
                 script {
                     def branchName = env.GIT_BRANCH?.replaceFirst(/^origin\//, '') ?: sh(script: "git rev-parse --abbrev-ref HEAD", returnStdout: true).trim()
-                    env.TF_ENVIRONMENT = branchName
-                    echo "🔀 Branch ${env.TF_ENVIRONMENT} selected"
+                    env.SELECTED_BRANCH = branchName
+                    echo "🔀 Branch ${env.SELECTED_BRANCH} selected"
                 }
             }
         }
 
         stage('Deploy Terraform Docker Image') {
+            when {
+                allOf {
+                    expression {
+                        return ['pipeline-pro', 'pipeline-dev', 'pipeline-qas'].contains(env.SELECTED_BRANCH)
+                    }
+                }
+            }
             agent {
                 docker {
                     image 'hashicorp/terraform:latest'
@@ -41,12 +52,11 @@ pipeline {
                 withCredentials([file(credentialsId: 'gcp-terraform-service-account-key', variable: 'GCP_CRED_FILE')]) {
                     sh 'cp $GCP_CRED_FILE $GOOGLE_APPLICATION_CREDENTIALS'
                 }
-                dir("terraform/${env.TF_ENVIRONMENT}") {
+                dir("terraform/${env.SELECTED_BRANCH}") {
                     sh '''
                         terraform init                       
                         terraform plan -out=tfplan
                     '''
-                    //terraform apply -auto-approve tfplan
                 }
             }
         }
@@ -55,7 +65,7 @@ pipeline {
             steps {
                 script {
                     env.IS_PR = env.CHANGE_ID ? 'true' : 'false'
-                    echo "🔍 Pull Request?: ${env.IS_PR}"
+                    echo "🔍 Pull Request?: ${env.CHANGE_ID}"
                 }
             }
         }
@@ -64,14 +74,15 @@ pipeline {
             when {
                 allOf {
                     expression {
-                        return env.TF_ENVIRONMENT != 'test-cicd'
-                        expression { return env.IS_PR != 'true' } // Si NO es PR
+                        return ['pipeline-pro', 'pipeline-dev', 'pipeline-qas'].contains(env.SELECTED_BRANCH)
+                        //expression { return env.IS_PR = 'false' } // Si NO es PR
 
                     }
                 }
             }
             steps {
-                input message: "¿Aprobar aplicación de cambios en ${env.TF_ENVIRONMENT}?"
+                input message: "¿Aprobar aplicación de cambios en ${env.SELECTED_BRANCH}?"
+                    //terraform apply -auto-approve tfplan
             }
         }
 
@@ -79,14 +90,14 @@ pipeline {
             when {
                 allOf {
                     expression {
-                        return env.TF_ENVIRONMENT != 'test-cicd'
-                        expression { return env.IS_PR != 'true' } // Si NO es PR
+                        return ['pipeline-pro', 'pipeline-dev', 'pipeline-qas'].contains(env.SELECTED_BRANCH)
+                        //expression { return env.IS_PR != 'true' } // Si NO es PR
                     }
                 }
             }
             steps {
                 script {
-                    echo "✅ Terraform Apply in ${env.TF_ENVIRONMENT}"
+                    echo "✅ Terraform Apply in ${env.SELECTED_BRANCH}"
                 }
             }
         }
