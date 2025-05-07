@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    options {
+        ansiColor('xterm')  // From ansiColor Plugin 
+    }
+
     environment {
         PROJECT_ID = 'test-interno-trendit'
         SERVICE_NAME = 'mike-cloud-run-service-tf'
