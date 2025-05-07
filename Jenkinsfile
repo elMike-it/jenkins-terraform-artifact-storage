@@ -50,7 +50,6 @@ pipeline {
                         terraform init                       
                         terraform plan -out=tfplan
                     '''
-                    //terraform apply -auto-approve tfplan
                 }
             }
         }
@@ -76,6 +75,7 @@ pipeline {
             }
             steps {
                 input message: "¿Aprobar aplicación de cambios en ${env.SELECTED_BRANCH}?"
+                    //terraform apply -auto-approve tfplan
             }
         }
 
