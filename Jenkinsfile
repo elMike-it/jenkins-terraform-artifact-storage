@@ -68,7 +68,7 @@ pipeline {
                 allOf {
                     expression {
                         return ['pipeline-pro', 'pipeline-dev', 'pipeline-qas'].contains(env.SELECTED_BRANCH)
-                        expression { return env.IS_PR = 'false' } // Si NO es PR
+                        //expression { return env.IS_PR = 'false' } // Si NO es PR
 
                     }
                 }
@@ -84,7 +84,7 @@ pipeline {
                 allOf {
                     expression {
                         return ['pipeline-pro', 'pipeline-dev', 'pipeline-qas'].contains(env.SELECTED_BRANCH)
-                        expression { return env.IS_PR != 'true' } // Si NO es PR
+                        //expression { return env.IS_PR != 'true' } // Si NO es PR
                     }
                 }
             }
