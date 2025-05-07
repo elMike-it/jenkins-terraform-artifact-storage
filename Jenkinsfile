@@ -30,6 +30,13 @@ pipeline {
         }
 
         stage('Deploy Terraform Docker Image') {
+            when {
+                allOf {
+                    expression {
+                        return ['pipeline-pro', 'pipeline-dev', 'pipeline-qas'].contains(env.SELECTED_BRANCH)
+                    }
+                }
+            }
             agent {
                 docker {
                     image 'hashicorp/terraform:latest'
