@@ -71,18 +71,16 @@ pipeline {
             }
         }
 
-        stage('PR'){
-            when{
-                branch 'PR-*'
-            }
-            steps {
-                script {
-                    env.IS_PR = env.CHANGE_ID ? 'true' : 'false'
-                    echo "🔍 Pull Request?: ${env.IS_PR}"
-                    echo "🔍 Pull Request?: ${env.CHANGE_ID}"
-                }
-            }            
-        }
+        // stage('PR'){
+        //     when{
+        //         branch 'PR-*'
+        //     }
+        //     steps {
+        //         script {
+        //             echo "🔍 Pull Request?: ${env.CHANGE_ID}"
+        //         }
+        //     }            
+        // }
 
         stage('Wating for approval') {
             when {
