@@ -65,6 +65,7 @@ pipeline {
             steps {
                 script {
                     env.IS_PR = env.CHANGE_ID ? 'true' : 'false'
+                    echo "🔍 Pull Request?: ${env.IS_PR}"
                     echo "🔍 Pull Request?: ${env.CHANGE_ID}"
                 }
             }
@@ -75,7 +76,7 @@ pipeline {
                 allOf {
                     expression {
                         return ['pipeline-pro', 'pipeline-dev', 'pipeline-qas'].contains(env.SELECTED_BRANCH)
-                        //expression { return env.IS_PR = 'false' } // Si NO es PR
+                        expression { return env.IS_PR = 'false' } // Si NO es PR
 
                     }
                 }
@@ -91,7 +92,7 @@ pipeline {
                 allOf {
                     expression {
                         return ['pipeline-pro', 'pipeline-dev', 'pipeline-qas'].contains(env.SELECTED_BRANCH)
-                        //expression { return env.IS_PR != 'true' } // Si NO es PR
+                        expression { return env.IS_PR != 'true' } // Si NO es PR
                     }
                 }
             }
