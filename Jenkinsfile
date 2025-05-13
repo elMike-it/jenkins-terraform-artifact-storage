@@ -87,7 +87,7 @@ pipeline {
             }
             steps {
                 script {
-                    echo "🔍 Pull Request in ${env.SELECTED_BRANCH} DONE."
+                    echo "🔍 Pull Request in ${env.SELECTED_BRANCH} DONE ."
                 }
             }            
         }
