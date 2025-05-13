@@ -107,12 +107,22 @@ pipeline {
                     }
                 }
             }
-
             steps {
-                script {
-                    echo "✅ Terraform Apply in ${env.SELECTED_BRANCH}"
+                withCredentials([file(credentialsId: 'gcp-terraform-service-account-key', variable: 'GCP_CRED_FILE')]) {
+                    sh 'cp $GCP_CRED_FILE $GOOGLE_APPLICATION_CREDENTIALS'
+                }
+                dir("terraform/${env.SELECTED_BRANCH}") {
+                    sh '''
+                        terraform init                       
+                        terraform plan -out=tfplan
+                    '''
                 }
             }
+            // steps {
+            //     script {
+            //         echo "✅ Terraform Apply in ${env.SELECTED_BRANCH}"
+            //     }
+            // }
         }
     }
 
