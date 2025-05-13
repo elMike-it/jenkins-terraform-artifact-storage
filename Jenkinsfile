@@ -29,7 +29,7 @@ pipeline {
             }
         }
 
-        stage('Deploy Terraform Docker Image') {
+        stage('Deploy Terraform Docker Image and PLAN') {
             when {
                 allOf {
                     expression {
@@ -71,58 +71,79 @@ pipeline {
             }
         }
 
-        stage('This is a Commit in a Pull'){
-            when{
-                branch 'pipeline-*'
-            }
-            steps {
-                script {
-                    echo "🔍 Commit in ${env.SELECTED_BRANCH} DONE."
-                }
-            }            
-        }
-        stage('This is a PR'){
-            when{
-                branch 'PR-*'
-            }
-            steps {
-                script {
-                    echo "🔍 Pull Request in ${env.SELECTED_BRANCH} DONE ."
-                }
-            }            
-        }
-
-        // stage('Wating for approval') {
-        //     when {
-        //         allOf {
-        //             expression {
-        //                 return ['pipeline-pro', 'pipeline-dev', 'pipeline-qas'].contains(env.SELECTED_BRANCH)
-        //                 expression { return env.IS_PR = 'false' } // Si NO es PR
-
-        //             }
-        //         }
-        //     }
-        //     steps {
-        //         input message: "¿Aprobar aplicación de cambios en ${env.SELECTED_BRANCH}?"
-        //             //terraform apply -auto-approve tfplan
-        //     }
-        // }
-
-        // stage('Apply') {
-        //     when {
-        //         allOf {
-        //             expression {
-        //                 return ['pipeline-pro', 'pipeline-dev', 'pipeline-qas'].contains(env.SELECTED_BRANCH)
-        //                 expression { return env.IS_PR != 'true' } // Si NO es PR
-        //             }
-        //         }
+        // stage('PR'){
+        //     when{
+        //         branch 'PR-*'
         //     }
         //     steps {
         //         script {
-        //             echo "✅ Terraform Apply in ${env.SELECTED_BRANCH}"
+        //             echo "🔍 Pull Request in ${env.CHANGE_ID} DONE."
         //         }
-        //     }
+        //     }            
         // }
+
+        stage('Wating for approval') {
+            when {
+                allOf {
+                    expression {
+                        return ['pipeline-pro', 'pipeline-dev', 'pipeline-qas'].contains(env.SELECTED_BRANCH)
+                        expression { return env.IS_PR = 'false' } // Si NO es PR
+
+                    }
+                }
+            }
+            steps {
+                input message: "¿Aprobar aplicación de cambios en ${env.SELECTED_BRANCH}?"
+                    
+            }
+        }
+
+        stage('Apply') {
+            when {
+                allOf {
+                    expression {
+                        return ['pipeline-pro', 'pipeline-dev', 'pipeline-qas'].contains(env.SELECTED_BRANCH)
+                        expression { return env.IS_PR != 'true' } // Si NO es PR
+                    }
+                }
+            }
+            steps {
+                script {
+                    echo "✅ Terraform Apply in ${env.SELECTED_BRANCH}"
+                }
+            }
+        }
+
+    //    stage('Deploy Terraform APLLY') {
+    //         when {
+    //             allOf {
+    //                 expression {
+    //                     return ['pipeline-pro', 'pipeline-dev', 'pipeline-qas'].contains(env.SELECTED_BRANCH)
+    //                 }
+    //             }
+    //         }
+    //         agent {
+    //             docker {
+    //                 image 'hashicorp/terraform:latest'
+    //                 args '--entrypoint=""'
+    //             }
+    //         }
+
+    //         environment {
+    //             GOOGLE_APPLICATION_CREDENTIALS = "${WORKSPACE}/gcp-key.json"
+    //         }
+
+    //         steps {
+    //             withCredentials([file(credentialsId: 'gcp-terraform-service-account-key', variable: 'GCP_CRED_FILE')]) {
+    //                 sh 'cp $GCP_CRED_FILE $GOOGLE_APPLICATION_CREDENTIALS'
+    //             }
+    //             dir("terraform/${env.SELECTED_BRANCH}") {
+    //                 sh '''
+    //                     terraform apply -auto-approve tfplan
+    //                 '''
+    //             }
+    //         }
+    //     }
 
     }
 
