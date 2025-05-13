@@ -71,16 +71,16 @@ pipeline {
             }
         }
 
-        stage('PR'){
-            when{
-                branch 'PR-*'
-            }
-            steps {
-                script {
-                    echo "🔍 Pull Request in ${env.CHANGE_ID} DONE."
-                }
-            }            
-        }
+        // stage('PR'){
+        //     when{
+        //         branch 'PR-*'
+        //     }
+        //     steps {
+        //         script {
+        //             echo "🔍 Pull Request in ${env.CHANGE_ID} DONE."
+        //         }
+        //     }            
+        // }
 
         stage('Wating for approval') {
             when {
