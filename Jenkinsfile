@@ -77,7 +77,7 @@ pipeline {
             }
             steps {
                 script {
-                    echo "🔍 Pull Request in ${env.CHANGE_ID} DONE"
+                    echo "🔍 Pull Request in ${env.CHANGE_ID} DONE."
                 }
             }            
         }
