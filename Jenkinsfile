@@ -107,13 +107,7 @@ pipeline {
                     }
                 }
             }
-            steps {
-                dir("terraform/${env.SELECTED_BRANCH}") {
-                    sh '''
-                        terraform apply                       
-                    '''
-                }
-            }
+
             steps {
                 script {
                     echo "✅ Terraform Apply in ${env.SELECTED_BRANCH}"
