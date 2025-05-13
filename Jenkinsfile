@@ -107,6 +107,12 @@ pipeline {
                     }
                 }
             }
+            agent {
+                docker {
+                    image 'hashicorp/terraform:latest'
+                    args '--entrypoint=""'
+                }
+            }
             steps {
 
                 dir("terraform/${env.SELECTED_BRANCH}") {
@@ -121,6 +127,7 @@ pipeline {
             //     }
             // }
         }
+        
     }
 
     post {
