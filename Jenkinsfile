@@ -114,36 +114,36 @@ pipeline {
             }
         }
 
-       stage('Deploy Terraform APLLY') {
-            when {
-                allOf {
-                    expression {
-                        return ['pipeline-pro', 'pipeline-dev', 'pipeline-qas'].contains(env.SELECTED_BRANCH)
-                    }
-                }
-            }
-            agent {
-                docker {
-                    image 'hashicorp/terraform:latest'
-                    args '--entrypoint=""'
-                }
-            }
+    //    stage('Deploy Terraform APLLY') {
+    //         when {
+    //             allOf {
+    //                 expression {
+    //                     return ['pipeline-pro', 'pipeline-dev', 'pipeline-qas'].contains(env.SELECTED_BRANCH)
+    //                 }
+    //             }
+    //         }
+    //         agent {
+    //             docker {
+    //                 image 'hashicorp/terraform:latest'
+    //                 args '--entrypoint=""'
+    //             }
+    //         }
 
-            environment {
-                GOOGLE_APPLICATION_CREDENTIALS = "${WORKSPACE}/gcp-key.json"
-            }
+    //         environment {
+    //             GOOGLE_APPLICATION_CREDENTIALS = "${WORKSPACE}/gcp-key.json"
+    //         }
 
-            steps {
-                withCredentials([file(credentialsId: 'gcp-terraform-service-account-key', variable: 'GCP_CRED_FILE')]) {
-                    sh 'cp $GCP_CRED_FILE $GOOGLE_APPLICATION_CREDENTIALS'
-                }
-                dir("terraform/${env.SELECTED_BRANCH}") {
-                    sh '''
-                        terraform apply -auto-approve tfplan
-                    '''
-                }
-            }
-        }
+    //         steps {
+    //             withCredentials([file(credentialsId: 'gcp-terraform-service-account-key', variable: 'GCP_CRED_FILE')]) {
+    //                 sh 'cp $GCP_CRED_FILE $GOOGLE_APPLICATION_CREDENTIALS'
+    //             }
+    //             dir("terraform/${env.SELECTED_BRANCH}") {
+    //                 sh '''
+    //                     terraform apply -auto-approve tfplan
+    //                 '''
+    //             }
+    //         }
+    //     }
 
     }
 
