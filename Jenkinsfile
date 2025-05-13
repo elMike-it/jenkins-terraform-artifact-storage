@@ -71,6 +71,17 @@ pipeline {
             }
         }
 
+        // stage('PR'){
+        //     when{
+        //         branch 'PR-*'
+        //     }
+        //     steps {
+        //         script {
+        //             echo "🔍 Pull Request?: ${env.CHANGE_ID}"
+        //         }
+        //     }            
+        // }
+
         stage('Wating for approval') {
             when {
                 allOf {
