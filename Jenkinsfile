@@ -77,7 +77,7 @@ pipeline {
             }
             steps {
                 script {
-                    echo "🔍 Commit in ${env.CHANGE_ID} DONE."
+                    echo "🔍 Commit in ${env.SELECTED_BRANCH} DONE."
                 }
             }            
         }
@@ -87,7 +87,7 @@ pipeline {
             }
             steps {
                 script {
-                    echo "🔍 Pull Request in ${env.CHANGE_ID} DONE."
+                    echo "🔍 Pull Request in ${env.SELECTED_BRANCH} DONE."
                 }
             }            
         }
