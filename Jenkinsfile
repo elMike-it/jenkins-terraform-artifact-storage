@@ -71,7 +71,17 @@ pipeline {
             }
         }
 
-        stage('PR'){
+        stage('This is a Commit in a Pull'){
+            when{
+                branch 'pipeline-*'
+            }
+            steps {
+                script {
+                    echo "🔍 Commit in ${env.CHANGE_ID} DONE."
+                }
+            }            
+        }
+        stage('This is a PR'){
             when{
                 branch 'PR-*'
             }
@@ -82,37 +92,37 @@ pipeline {
             }            
         }
 
-        stage('Wating for approval') {
-            when {
-                allOf {
-                    expression {
-                        return ['pipeline-pro', 'pipeline-dev', 'pipeline-qas'].contains(env.SELECTED_BRANCH)
-                        expression { return env.IS_PR = 'false' } // Si NO es PR
+        // stage('Wating for approval') {
+        //     when {
+        //         allOf {
+        //             expression {
+        //                 return ['pipeline-pro', 'pipeline-dev', 'pipeline-qas'].contains(env.SELECTED_BRANCH)
+        //                 expression { return env.IS_PR = 'false' } // Si NO es PR
 
-                    }
-                }
-            }
-            steps {
-                input message: "¿Aprobar aplicación de cambios en ${env.SELECTED_BRANCH}?"
-                    //terraform apply -auto-approve tfplan
-            }
-        }
+        //             }
+        //         }
+        //     }
+        //     steps {
+        //         input message: "¿Aprobar aplicación de cambios en ${env.SELECTED_BRANCH}?"
+        //             //terraform apply -auto-approve tfplan
+        //     }
+        // }
 
-        stage('Apply') {
-            when {
-                allOf {
-                    expression {
-                        return ['pipeline-pro', 'pipeline-dev', 'pipeline-qas'].contains(env.SELECTED_BRANCH)
-                        expression { return env.IS_PR != 'true' } // Si NO es PR
-                    }
-                }
-            }
-            steps {
-                script {
-                    echo "✅ Terraform Apply in ${env.SELECTED_BRANCH}"
-                }
-            }
-        }
+        // stage('Apply') {
+        //     when {
+        //         allOf {
+        //             expression {
+        //                 return ['pipeline-pro', 'pipeline-dev', 'pipeline-qas'].contains(env.SELECTED_BRANCH)
+        //                 expression { return env.IS_PR != 'true' } // Si NO es PR
+        //             }
+        //         }
+        //     }
+        //     steps {
+        //         script {
+        //             echo "✅ Terraform Apply in ${env.SELECTED_BRANCH}"
+        //         }
+        //     }
+        // }
 
     }
 
