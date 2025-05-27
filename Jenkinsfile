@@ -120,6 +120,9 @@ pipeline {
                         terraform plan -out=tfplan
                     '''
                 }
+                script {
+                   echo "✅ Terraform Apply in ${env.SELECTED_BRANCH}"
+                }
             }
             // steps {
             //     script {
