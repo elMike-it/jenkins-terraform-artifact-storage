@@ -117,7 +117,7 @@ pipeline {
 
                 dir("terraform/${env.SELECTED_BRANCH}") {
                     sh '''
-                        terraform plan -out=tfplan
+                        terraform apply
                     '''
                 }
                 script {
