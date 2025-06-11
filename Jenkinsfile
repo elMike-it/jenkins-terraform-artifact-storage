@@ -56,82 +56,13 @@ pipeline {
                     sh '''
                         terraform init                       
                         terraform plan -out=tfplan
-                    '''
-                }
-            }
-        }
-
-        stage('Pull Request?') {
-            steps {
-                script {
-                    env.IS_PR = env.CHANGE_ID ? 'true' : 'false'
-                    echo "🔍 Pull Request?: ${env.IS_PR}"
-                    echo "🔍 Pull Request?: ${env.CHANGE_ID}"
-                }
-            }
-        }
-
-        // stage('PR'){
-        //     when{
-        //         branch 'PR-*'
-        //     }
-        //     steps {
-        //         script {
-        //             echo "🔍 Pull Request in ${env.CHANGE_ID} DONE."
-        //         }
-        //     }            
-        // }
-
-        stage('Wating for approval') {
-            when {
-                allOf {
-                    expression {
-                        return ['pipeline-pro', 'pipeline-dev', 'pipeline-qas'].contains(env.SELECTED_BRANCH)
-                        expression { return env.IS_PR = 'false' } // Si NO es PR
-
-                    }
-                }
-            }
-            steps {
-                input message: "¿Aprobar aplicación de cambios en ${env.SELECTED_BRANCH}?"
-                    
-            }
-        }
-
-        stage('Apply') {
-            when {
-                allOf {
-                    expression {
-                        return ['pipeline-pro', 'pipeline-dev', 'pipeline-qas'].contains(env.SELECTED_BRANCH)
-                        expression { return env.IS_PR != 'true' } // Si NO es PR
-                    }
-                }
-            }
-            agent {
-                docker {
-                    image 'hashicorp/terraform:latest'
-                    args '--entrypoint=""'
-                }
-            }
-            steps {
-
-                dir("terraform/${env.SELECTED_BRANCH}") {
-                    sh '''
                         terraform apply
                     '''
                 }
-                script {
-                   echo "✅ Terraform Apply in ${env.SELECTED_BRANCH}"
-                }
             }
-            // steps {
-            //     script {
-            //         echo "✅ Terraform Apply in ${env.SELECTED_BRANCH}"
-            //     }
-            // }
         }
+
         
-    }
 
     post {
         always {
